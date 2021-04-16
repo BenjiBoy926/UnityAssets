@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomPropertyDrawer(typeof(FloatRange))]
-public class FloatRangeDrawer : PropertyDrawer
+[CustomPropertyDrawer(typeof(IntRange))]
+public class IntRangeDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
@@ -32,12 +32,12 @@ public class FloatRangeDrawer : PropertyDrawer
 
         // Create the min editor
         EditorGUI.BeginChangeCheck();
-        min.floatValue = EditorGUI.DelayedFloatField(layout.Next(), min.floatValue);
+        min.intValue = EditorGUI.DelayedIntField(layout.Next(), min.intValue);
 
         // If the max was modified, ensure that the max is not smaller than the new min
-        if(EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())
         {
-            max.floatValue = Mathf.Max(min.floatValue, max.floatValue);
+            max.intValue = Mathf.Max(min.intValue, max.intValue);
         }
 
         // Create the max label
@@ -45,12 +45,12 @@ public class FloatRangeDrawer : PropertyDrawer
 
         // Create the max editor
         EditorGUI.BeginChangeCheck();
-        max.floatValue = EditorGUI.DelayedFloatField(layout.Next(), max.floatValue);
+        max.intValue = EditorGUI.DelayedIntField(layout.Next(), max.intValue);
 
         // If the max was modified, ensure that the min is not bigger than the new max
-        if(EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())
         {
-            min.floatValue = Mathf.Min(min.floatValue, max.floatValue);
+            min.intValue = Mathf.Min(min.intValue, max.intValue);
         }
 
         // Restore indent level
