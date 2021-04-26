@@ -26,10 +26,19 @@ public struct TransformData
         _scale = scale;
     }
 
-    public void SetTransform(Transform transform)
+    public void SetTransform(Transform transform, Space space = Space.Self)
     {
-        transform.position = _position;
-        transform.rotation = Quaternion.Euler(_rotation);
+        if(space == Space.Self)
+        {
+            transform.localPosition = _position;
+            transform.localRotation = Quaternion.Euler(_rotation);
+        }
+        else
+        {
+            transform.position = _position;
+            transform.rotation = Quaternion.Euler(_rotation);
+        }
+        
         transform.localScale = _scale;
     }
 }
