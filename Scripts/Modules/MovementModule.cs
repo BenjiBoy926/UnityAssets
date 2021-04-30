@@ -126,3 +126,8 @@ public static class MovementModule
         rb2D.rotation = endingRotation;
     }
 }
+
+public enum RotationDirection
+{
+    Clockwise, CounterClockwise
+}
