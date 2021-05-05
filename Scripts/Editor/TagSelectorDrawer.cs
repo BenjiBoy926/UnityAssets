@@ -11,7 +11,15 @@ public class TagSelectorDrawer : PropertyDrawer
         if (property.propertyType == SerializedPropertyType.String)
         {
             Rect newPos = EditorGUI.PrefixLabel(position, label);
+
+            // Make sure this part is not indented
+            int oldIndent = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+            
             property.stringValue = EditorGUI.TagField(newPos, property.stringValue);
+
+            // Restore old indents
+            EditorGUI.indentLevel = oldIndent;
         }
         else
         {
