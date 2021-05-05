@@ -65,6 +65,16 @@ public static class MovementModule
             yield return transform.MoveOverTime(startingPos, moveTime);
         }
     }
+    // Infinitely shake the transform
+    public static IEnumerator Shake2D(this Transform transform, Vector3 basePosition, float shakeMagnitude, float shakeInterval)
+    {
+        WaitForSeconds wait = new WaitForSeconds(shakeInterval);
+        while(true)
+        {
+            transform.position = basePosition + (Vector3)(Random.insideUnitCircle * shakeMagnitude);
+            yield return wait;
+        }
+    }
 
     public static IEnumerator MoveOverTime(this Rigidbody2D rb2D, Vector2 endingPos, float time)
     {
