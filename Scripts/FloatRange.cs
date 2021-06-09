@@ -15,4 +15,17 @@ public struct FloatRange
     public float min => _min;
     public float max => _max;
     public float length => _max - _min;
+
+    public FloatRange(float min, float max)
+    {
+        if(min > max)
+        {
+            float temp = min;
+            min = max;
+            max = temp;
+        }
+
+        _min = min;
+        _max = max;
+    }
 }
