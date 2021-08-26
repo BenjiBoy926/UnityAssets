@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_2020_1_OR_NEWER
 [CustomPropertyDrawer(typeof(ArrayOnEnum<,>))]
 public class ArrayOnEnumDrawer : PropertyDrawer
 {
@@ -64,3 +65,4 @@ public class ArrayOnEnumDrawer : PropertyDrawer
         return height;
     }
 }
+#endif
