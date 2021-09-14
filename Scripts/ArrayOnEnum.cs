@@ -6,14 +6,33 @@ using UnityEngine;
 [Serializable]
 public class ArrayOnEnum<TEnum, TData> where TEnum : Enum
 {
+    #region Public Propeties
+    public TData[] Data => data;
+    #endregion
+
+    #region Private Editor Fields
     [SerializeField]
     [Tooltip("Data in the array")]
     private TData[] data;
+    #endregion
 
+    #region Constructors
+    public ArrayOnEnum()
+    {
+        TEnum[] values = (TEnum[])Enum.GetValues(typeof(TEnum));
+        data = new TData[values.Length];
+    }
+    #endregion
+
+    #region Public Methods
     public TData Get(TEnum e)
     {
-        Array enumValues = Enum.GetValues(typeof(TEnum));
-        int i = Array.IndexOf(enumValues, e);
-        return data[i];
+        return data[Index(e)];
     }
+    public void Set(TEnum e, TData d)
+    {
+        data[Index(e)] = d;
+    }
+    public int Index(TEnum e) => Array.IndexOf(Enum.GetValues(typeof(TEnum)), e);
+    #endregion
 }
