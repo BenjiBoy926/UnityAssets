@@ -19,8 +19,8 @@ public class ArrayOnEnum<TEnum, TData> where TEnum : Enum
     #region Constructors
     public ArrayOnEnum()
     {
-        TEnum[] values = (TEnum[])Enum.GetValues(typeof(TEnum));
-        data = new TData[values.Length];
+        string[] names = Enum.GetNames(typeof(TEnum));
+        data = new TData[names.Length];
     }
     #endregion
 
