@@ -10,6 +10,15 @@ public class MonoBehaviourSingleton<BehaviourType> : MonoBehaviour
     {
         get
         {
+            if(!instance)
+            {
+                // Try to instantiate the component from the resources folder
+                string typename = typeof(BehaviourType).Name;
+                instance = ResourcesExtensions.InstantiateFromResources<BehaviourType>(typename, null);
+
+                // Make the instance not destroyed on load
+                DontDestroyOnLoad(instance);
+            }
             return instance;
         }
     }
