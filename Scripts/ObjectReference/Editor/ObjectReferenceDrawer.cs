@@ -4,15 +4,15 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomPropertyDrawer(typeof(ObjectReference))]
-public class ObjectReferenceEditor : PropertyDrawer
+public class ObjectReferenceDrawer : PropertyDrawer
 {
     #region Public Methods
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+        SerializedProperty canCacheObject = property.FindPropertyRelative(nameof(canCacheObject));
         SerializedProperty referenceType = property.FindPropertyRelative(nameof(referenceType));
         SerializedProperty directReference = property.FindPropertyRelative(nameof(directReference));
-        SerializedProperty findReference = property.FindPropertyRelative(nameof(findReference));
-        SerializedProperty componentReference = property.FindPropertyRelative(nameof(componentReference));
+        SerializedProperty sceneReference = property.FindPropertyRelative(nameof(sceneReference));
         SerializedProperty resourcesReference = property.FindPropertyRelative(nameof(resourcesReference));
 
         // Set height for just one control
@@ -38,15 +38,15 @@ public class ObjectReferenceEditor : PropertyDrawer
             {
                 EditorGUI.PropertyField(position, directReference);
             }
-            else if (referenceType.enumValueIndex == 1)
+            else
             {
-                FindReferenceEditor.OnGUINoFoldout(position, findReference);
+                // Edit the can cache object field
+                EditorGUI.PropertyField(position, canCacheObject);
+                position.y += position.height;
+
+                if(referenceType.enumValueIndex == 1) SceneReferenceLoaderDrawer.OnGUINoFoldout(position, sceneReference);
+                else ResourcesReferenceDrawer.OnGUINoFoldout(position, resourcesReference);
             }
-            else if (referenceType.enumValueIndex == 2)
-            {
-                ComponentReferenceEditor.OnGUINoFoldout(position, componentReference);
-            }
-            else ResourcesReferenceEditor.OnGUINoFoldout(position, resourcesReference);
 
             // Restore normal indent
             EditorGUI.indentLevel--;
@@ -56,31 +56,33 @@ public class ObjectReferenceEditor : PropertyDrawer
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         SerializedProperty referenceType = property.FindPropertyRelative(nameof(referenceType));
-        SerializedProperty directReference = property.FindPropertyRelative(nameof(directReference));
-        SerializedProperty findReference = property.FindPropertyRelative(nameof(findReference));
-        SerializedProperty componentReference = property.FindPropertyRelative(nameof(componentReference));
+        SerializedProperty sceneReference = property.FindPropertyRelative(nameof(sceneReference));
         SerializedProperty resourcesReference = property.FindPropertyRelative(nameof(resourcesReference));
 
-        float height = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+        float standardControlHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+        float height = standardControlHeight;
 
         if(property.isExpanded)
         {
-            height *= 2f;
+            // Add height for reference type edit
+            height += standardControlHeight;
 
-            // Add correct height based on the reference type
+            // Add height for the direct reference drawer
             if (referenceType.enumValueIndex == 0)
             {
-                height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing; ;
+                height += standardControlHeight;
             }
-            else if (referenceType.enumValueIndex == 1)
+            else
             {
-                height += FindReferenceEditor.GetPropertyHeightNoFoldout(findReference);
+                // Add height for the can cache object property
+                height += standardControlHeight;
+
+                if(referenceType.enumValueIndex == 1)
+                {
+                    height += SceneReferenceLoaderDrawer.GetPropertyHeightNoFoldout(sceneReference);
+                }
+                else height += ResourcesReferenceDrawer.GetPropertyHeightNoFoldout(resourcesReference);
             }
-            else if (referenceType.enumValueIndex == 2)
-            {
-                height += ComponentReferenceEditor.GetPropertyHeightNoFoldout(componentReference);
-            }
-            else height += ResourcesReferenceEditor.GetPropertyHeightNoFoldout(resourcesReference);
         }
 
         return height;

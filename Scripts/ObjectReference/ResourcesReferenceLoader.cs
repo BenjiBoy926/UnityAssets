@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ResourcesReference : CachedObjectReference
+public class ResourcesReferenceLoader : ObjectReferenceLoader
 {
     #region Public Typedefs
     public enum Type
@@ -27,27 +27,28 @@ public class ResourcesReference : CachedObjectReference
     private string resourcePath;
     #endregion
 
-    #region Public Methods
+    #region Overridden Methods
     public override Object LoadObject(System.Type type)
     {
+        // Load the object or get null
         // Assume the reference is null to start
         Object reference = null;
 
         // Set the reference based on the reference type
-        switch(referenceType)
+        switch (referenceType)
         {
             case Type.LoadDirectly:
                 reference = Resources.Load(resourcePath, type);
                 break;
             case Type.LoadAny:
-                if(type.IsSubclassOf(typeof(Component)))
+                if (type.IsSubclassOf(typeof(Component)))
                 {
                     GameObject[] gameObjects = Resources.LoadAll<GameObject>(resourcePath);
                     int index = 0;
 
                     // While the reference does not exist and we are in range of the objects,
                     // try to set the reference equal to the component on the game object
-                    while(!reference && index < gameObjects.Length)
+                    while (!reference && index < gameObjects.Length)
                     {
                         reference = gameObjects[0].GetComponent(type);
                         index++;
@@ -62,23 +63,32 @@ public class ResourcesReference : CachedObjectReference
                 break;
         }
 
-        if (reference) return reference;
-        else
+        // If no reference was found then set the reason why it was not found
+        if(!reference)
         {
             // Throw the correct exception based on how the reference failed
             switch (referenceType)
             {
-                case Type.LoadDirectly: throw new MissingReferenceException($"{nameof(ResourcesReference)}: " +
-                    $"no object of type '{type.Name}' found at resources path '{resourcePath}'");
+                case Type.LoadDirectly: 
+                    break;
                 case Type.LoadAny:
-                    if (type.IsSubclassOf(typeof(Component))) throw new MissingReferenceException($"{nameof(ResourcesReference)}: " +
-                        $"no component of type '{type.Name}' could be found in any game object at resource path '{resourcePath}'");
-                    else throw new MissingReferenceException($"{nameof(ResourcesReference)}: " +
-                        $"no object of type '{type.Name}' found in resource path '{resourcePath}'");
-                default: throw new System.NotImplementedException($"{nameof(ResourcesReference)}: " +
-                    $"reference type '{referenceType}' not implemented");
+                    if (type.IsSubclassOf(typeof(Component)))
+                    {
+                        objectNotFoundReason = $"no component of type '{type.Name}' could be found " +
+                            $"on any game object at resource path '{resourcePath}'";
+                    }
+                    else
+                    {
+                        objectNotFoundReason = $"no object of type '{type.Name}' found in resource path '{resourcePath}'";
+                    }
+                    break;
+                default: 
+                    objectNotFoundReason = $"reference type '{referenceType}' not implemented"; 
+                    break;
             }
         }
+
+        return reference;
     }
     #endregion
 }
