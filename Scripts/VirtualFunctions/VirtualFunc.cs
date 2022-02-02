@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class VirtualFunc<T>
 {
+    #region Public Properties
+    public bool HasVirtualFunc => virtualFunc != null;
+    public bool HasOverrideFunc => overrideFunc != null;
+    #endregion
+
     #region Private Fields
     private Func<T> virtualFunc;
     private Func<T> overrideFunc;
