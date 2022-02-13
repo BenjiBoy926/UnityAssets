@@ -9,6 +9,8 @@ public class ArrayOnEnumDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+        label = EditorGUI.BeginProperty(position, label, property);
+
         // The data array for this property
         SerializedProperty data = property.FindPropertyRelative(nameof(data));
 
@@ -42,7 +44,8 @@ public class ArrayOnEnumDrawer : PropertyDrawer
             // Restore indent
             EditorGUI.indentLevel--;
         }
-        
+
+        EditorGUI.EndProperty();
     }
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
