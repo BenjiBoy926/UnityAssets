@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,13 +15,22 @@ public class Sound2DChannelIndexDrawer : PropertyDrawer
         property.Next(true);
 
         // Get a list of the names of the audio mixer outputs
-        string[] outputNames = Sound2DSettings
-            .Channels
-            .Select(channel => channel.Output.name)
+        GUIContent[] additionalChannelNames = Sound2DSettings
+            .AdditionalChannels
+            .Select(channel => new GUIContent(channel.Output.name))
             .ToArray();
 
+        GUIContent[] allChannelNames = new GUIContent[2 + additionalChannelNames.Length];
+
+        // Add names for music then SFX
+        allChannelNames[0] = new GUIContent(Sound2DSettings.MusicChannel.Output.name);
+        allChannelNames[1] = new GUIContent(Sound2DSettings.SFXChannel.Output.name);
+        
+        // Copy in additional channel names
+        Array.Copy(additionalChannelNames, 0, allChannelNames, 2, additionalChannelNames.Length);
+
         // Use a popup to select a channel
-        property.intValue = EditorGUI.Popup(position, label.text, property.intValue, outputNames);
+        property.intValue = EditorGUI.Popup(position, label, property.intValue, additionalChannelNames);
     }
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {

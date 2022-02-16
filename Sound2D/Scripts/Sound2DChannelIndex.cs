@@ -6,13 +6,20 @@ using UnityEngine;
 public struct Sound2DChannelIndex
 {
     #region Public Properties
-    public int ChannelIndex => channelIndex;
-    public Sound2DChannel Channel => Sound2DSettings.Get(channelIndex);
+    public int Index => index;
+    public Sound2DChannel Channel => Sound2DSettings.Get(this);
     #endregion
 
     #region Private Editor Fields
     [SerializeField]
     [Tooltip("Index of the sound channel in the sound settings")]
-    private int channelIndex;
+    private int index;
+    #endregion
+
+    #region Constructors
+    public Sound2DChannelIndex(int index)
+    {
+        this.index = index;
+    }
     #endregion
 }

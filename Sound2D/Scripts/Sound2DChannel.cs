@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 
 [System.Serializable]
-public class Sound2DChannel
+public struct Sound2DChannel
 {
     #region Public Properties
     public AudioMixerGroup Output => output;
@@ -20,6 +20,6 @@ public class Sound2DChannel
         "This number should be higher for channels where many " +
         "concurrent sounds are expected to play, such as a channel " +
         "for sound effects")]
-    private int audioSourceCount = 0;
+    private int audioSourceCount;
     #endregion
 }

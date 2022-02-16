@@ -23,7 +23,7 @@ public class Sound2DManager : MonoBehaviour
     #region Private Methods
     private void Setup()
     {
-        foreach (Sound2DChannel channel in Sound2DSettings.Channels)
+        foreach (Sound2DChannel channel in Sound2DSettings.AdditionalChannels)
         {
             // Create an object under my transform
             GameObject parent = new GameObject($"Output: '{channel.Output.name}'");
