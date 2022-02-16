@@ -1,15 +1,13 @@
 using System.Linq;
 using UnityEngine;
+using UnityEditor;
 
 public class ScriptableObjectSingleton<BaseType> : ScriptableObject
     where BaseType : ScriptableObjectSingleton<BaseType>
 {
-    #region Private Properties
-    public virtual string FilePath => typeof(BaseType).Name;
-    #endregion
-
     #region Private Fields
     private static BaseType instance;
+    private static string filePath => typeof(BaseType).Name;
     #endregion
 
     #region Protected Properties
@@ -19,26 +17,24 @@ public class ScriptableObjectSingleton<BaseType> : ScriptableObject
         {
             if (!instance)
             {
-                // Create a dummy object that will not be saved to assets
-                // This is used to get the overridden file path
-                BaseType dummyObject = CreateInstance<BaseType>();
-                string filePath = dummyObject.FilePath;
-
                 // Try to get a scriptable object at the file path
-                BaseType scriptableObject = Resources.Load<BaseType>(dummyObject.FilePath);
+                BaseType scriptableObject = Resources.Load<BaseType>(filePath);
 
                 // If some objects were found then set the instance to the first one
                 if (scriptableObject) instance = scriptableObject;
                 // If no instances found then throw exception
                 else
                 {
-                    string typename = typeof(BaseType).Name;
-                    throw new MissingReferenceException(
-                        $"No scriptable object of type '{typename}' " +
-                        $"could be found at any resources path 'Resources/{filePath}'. " +
-                        $"Make sure a scriptable object with this type " +
-                        $"exists at this path, or override the '{nameof(FilePath)}' " +
-                        $"property in the '{typename}' source code");
+                    // Check if the project already has a resources folder
+                    bool hasResourcesFolder = AssetDatabase.IsValidFolder("Assets/Resources");
+
+                    // If the folder does not exist then create it
+                    if (!hasResourcesFolder) AssetDatabase.CreateFolder("Assets", "Resources");
+
+                    // Create the scriptable object and save it to the asset database
+                    scriptableObject = CreateInstance<BaseType>();
+                    AssetDatabase.CreateAsset(scriptableObject, "Assets/Resources");
+                    AssetDatabase.SaveAssets();
                 }
             }
             // If instance is not null return it
