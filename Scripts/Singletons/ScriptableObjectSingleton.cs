@@ -1,6 +1,5 @@
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
 
 public class ScriptableObjectSingleton<BaseType> : ScriptableObject
     where BaseType : ScriptableObjectSingleton<BaseType>
