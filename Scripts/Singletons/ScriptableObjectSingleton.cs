@@ -23,19 +23,11 @@ public class ScriptableObjectSingleton<BaseType> : ScriptableObject
                 // If some objects were found then set the instance to the first one
                 if (scriptableObject) instance = scriptableObject;
                 // If no instances found then throw exception
-                else
-                {
-                    // Check if the project already has a resources folder
-                    bool hasResourcesFolder = AssetDatabase.IsValidFolder("Assets/Resources");
-
-                    // If the folder does not exist then create it
-                    if (!hasResourcesFolder) AssetDatabase.CreateFolder("Assets", "Resources");
-
-                    // Create the scriptable object and save it to the asset database
-                    scriptableObject = CreateInstance<BaseType>();
-                    AssetDatabase.CreateAsset(scriptableObject, "Assets/Resources");
-                    AssetDatabase.SaveAssets();
-                }
+                else throw new MissingReferenceException(
+                    $"Expected to find a scriptable object of type '{typeof(BaseType).Name}' " +
+                    $"at any resources path 'Resources/{filePath}', but no such scriptable " +
+                    $"object could be found. Please create an object of type " +
+                    $"'{typeof(BaseType).Name}' at any resources path 'Resources/{filePath}'");
             }
             // If instance is not null return it
             return instance;
