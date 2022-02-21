@@ -163,5 +163,56 @@ public class EditorGUIAuto
         else throw new System.ArgumentNullException($"Parameter '{nameof(iterator)}' " +
             $"cannot be null");
     }
+    public static IEnumerable<SerializedProperty> ToEnd(SerializedProperty parent, string startFieldName, string endFieldName, bool enterChildren, bool skipInvisible)
+    {
+        // Get start and end properties
+        SerializedProperty start = parent.FindPropertyRelative(startFieldName);
+        SerializedProperty end = parent.FindPropertyRelative(endFieldName);
+
+        // If start and end are not null then invoke the function
+        if (start != null && end != null) return ToEnd(start, end, enterChildren, skipInvisible);
+
+        // If start is null then throw exception
+        else if (start == null) throw new System.NullReferenceException($"Property {parent.name} " +
+            $"has no serialized property at the relative path " +
+            $"{parent.name}.{startFieldName}. Make sure the name " +
+            $"of the relative path is correct " +
+            $"and that the property at that path is serializable");
+
+        // If end is null then throw exception
+        else throw new System.NullReferenceException($"Property {parent.name} " +
+            $"has no serialized property at the relative path " +
+            $"{parent.name}.{endFieldName}. Make sure the name " +
+            $"of the relative path is correct " +
+            $"and that the property at that path is serializable");
+    }
+    public static IEnumerable<SerializedProperty> ToEnd(SerializedProperty start, SerializedProperty end, bool enterChildren, bool skipInvisible)
+    {
+        if (start == null) throw new System.ArgumentNullException(
+            $"Parameter '{nameof(start)}' cannot be null");
+
+        if (end == null) throw new System.ArgumentNullException(
+            $"Parameter '{nameof(end)}' cannot be null");
+
+        // Store if the start has a next property
+        bool hasNext = true;
+
+        // Loop until start equals end or it has no next property
+        while (start.propertyPath != end.propertyPath && hasNext)
+        {
+            yield return start;
+
+            // If we should skip invisible then go to the next visible property
+            if (skipInvisible)
+            {
+                hasNext = start.NextVisible(enterChildren);
+            }
+            // If we do not skip invisible then go to next property
+            else hasNext = start.Next(enterChildren);
+        }
+
+        // Return the very last property as well
+        yield return start;
+    }
     #endregion
 }
