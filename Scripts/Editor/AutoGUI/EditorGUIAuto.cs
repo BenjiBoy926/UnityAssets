@@ -160,8 +160,8 @@ public class EditorGUIAuto
                 else hasNext = iterator.Next(enterChildren);
             }
         }
-        else throw new System.ArgumentNullException($"Parameter '{nameof(iterator)}' " +
-            $"cannot be null");
+        else throw new System.ArgumentNullException(
+            $"Parameter '{nameof(iterator)}' cannot be null");
     }
     public static IEnumerable<SerializedProperty> ToEnd(SerializedProperty parent, string startFieldName, string endFieldName, bool enterChildren, bool skipInvisible)
     {
@@ -170,7 +170,12 @@ public class EditorGUIAuto
         SerializedProperty end = parent.FindPropertyRelative(endFieldName);
 
         // If start and end are not null then invoke the function
-        if (start != null && end != null) return ToEnd(start, end, enterChildren, skipInvisible);
+        if (start != null && end != null)
+        {
+            // Advance to the property after the end
+            end.Next(false);
+            return ToEnd(start, end, enterChildren, skipInvisible);
+        }
 
         // If start is null then throw exception
         else if (start == null) throw new System.NullReferenceException($"Property {parent.name} " +
@@ -210,9 +215,6 @@ public class EditorGUIAuto
             // If we do not skip invisible then go to next property
             else hasNext = start.Next(enterChildren);
         }
-
-        // Return the very last property as well
-        yield return start;
     }
     #endregion
 }
