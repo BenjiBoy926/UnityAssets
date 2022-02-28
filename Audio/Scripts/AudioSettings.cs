@@ -6,7 +6,7 @@ using UnityEngine.Audio;
 
 namespace Audio
 {
-    [CreateAssetMenu(menuName = "Sound2D", fileName = "Sound2DSettings")]
+    [CreateAssetMenu(fileName = nameof(AudioSettings))]
     public class AudioSettings : ScriptableObjectSingleton<AudioSettings>
     {
         #region Public Properties
