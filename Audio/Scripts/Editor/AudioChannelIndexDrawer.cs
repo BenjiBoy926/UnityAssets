@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Audio.Editor
+namespace AudioLibrary.Editor
 {
     [CustomPropertyDrawer(typeof(AudioChannelIndex))]
     public class AudioChannelIndexDrawer : PropertyDrawer

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace Audio
+namespace AudioLibrary
 {
     [CreateAssetMenu(fileName = nameof(AudioSettings))]
     public class AudioSettings : ScriptableObjectSingleton<AudioSettings>

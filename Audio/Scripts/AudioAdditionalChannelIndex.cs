@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Audio
+namespace AudioLibrary
 {
     [System.Serializable]
     public struct AudioAdditionalChannelIndex
