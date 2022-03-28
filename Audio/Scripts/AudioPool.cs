@@ -19,17 +19,17 @@ namespace AudioLibrary
         #endregion
 
         #region Private Fields
-        private int index;
+        private int channelIndex;
         #endregion
 
         #region Constructors
-        public AudioPool(int index, GameObject parent)
+        public AudioPool(int channelIndex, GameObject parent)
         {
             // Set this template channel
-            this.index = index;
+            this.channelIndex = channelIndex;
 
             // Get the channel referenced by the index
-            AudioChannel channel = AudioSettings.GetChannel(index);
+            AudioChannel channel = AudioSettings.GetChannel(channelIndex);
 
             // Initialize the array
             sources = new AudioSource[channel.AudioSourceCount];
@@ -106,9 +106,9 @@ namespace AudioLibrary
             // Update current to the next source
             current = (current + 1) % sources.Length;
 
-            // Continue to loop until we find a source that is not looping
+            // Continue to loop until we find a source that is not playing
             // or until we loop all the way around to the start again
-            while (current != start && sources[current].loop)
+            while (current != start && sources[current].isPlaying)
             {
                 current = (current + 1) % sources.Length;
             }
