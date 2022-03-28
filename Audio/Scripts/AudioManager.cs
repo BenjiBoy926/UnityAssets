@@ -75,24 +75,6 @@ namespace AudioLibrary
             return Play(clip, 1, sourceIndex, looping);
         }
 
-        // Additional channel
-        public static AudioSource PlayFromAdditionalChannel(AudioClip clip, int index, bool looping = false)
-        {
-            return Play(clip, index + 2, looping);
-        }
-        public static AudioSource PlayFromAdditionalChannel(AudioClip clip, AudioAdditionalChannelIndex index, bool looping = false)
-        {
-            return PlayFromAdditionalChannel(clip, index.Index, looping);
-        }
-        public static AudioSource PlayFromAdditionalChannel(AudioClip clip, int index, int sourceIndex, bool looping = false)
-        {
-            return Play(clip, index + 2, sourceIndex, looping);
-        }
-        public static AudioSource PlayFromAdditionalChannel(AudioClip clip, AudioAdditionalChannelIndex index, int sourceIndex, bool looping = false)
-        {
-            return PlayFromAdditionalChannel(clip, index.Index, sourceIndex, looping);
-        }
-
         // General play
         public static AudioSource Play(AudioClip clip, AudioChannelIndex index, bool looping = false)
         {

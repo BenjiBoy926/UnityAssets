@@ -22,3 +22,21 @@ MonoBehaviour:
       type: 2}
     audioSourceCount: 8
   additionalChannels: []
+  defaultMixer:
+    mixer: {fileID: 0}
+    masterChannel:
+      hasChannel: 0
+      channel:
+        output: {fileID: 0}
+        audioSourceCount: 0
+    musicChannel:
+      hasChannel: 0
+      channel:
+        output: {fileID: 0}
+        audioSourceCount: 0
+    sfxChannel:
+      hasChannel: 0
+      channel:
+        output: {fileID: 0}
+        audioSourceCount: 0
+    additionalChannels: []

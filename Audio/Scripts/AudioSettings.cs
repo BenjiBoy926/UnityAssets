@@ -30,6 +30,9 @@ namespace AudioLibrary
         [SerializeField]
         [Tooltip("List of channels to use for the 2D sound")]
         private AudioChannel[] additionalChannels = new AudioChannel[0];
+        [SerializeField]
+        [Tooltip("Default audio mixer for the audio settings")]
+        private AudioMixerData defaultMixer;
         #endregion
 
         #region Public Access Methods
@@ -44,11 +47,7 @@ namespace AudioLibrary
             // If index is 1 then reteurn sfx channel
             else if (index == 1) return SFXChannel;
             // If something other than 0 or 1 then return an additional channel
-            else return GetAdditionalChannel(new AudioAdditionalChannelIndex(index - 2));
-        }
-        public static AudioChannel GetAdditionalChannel(AudioAdditionalChannelIndex index)
-        {
-            return GetAdditionalChannel(index.Index);
+            else return new AudioChannel();
         }
         public static AudioChannel GetAdditionalChannel(int index)
         {
