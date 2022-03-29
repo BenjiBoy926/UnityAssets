@@ -30,7 +30,10 @@ namespace AudioLibrary.Editor
                 SerializedProperty mixerIndex = property.FindPropertyRelative("index");
                 property.Next(false);
                 position = EditorGUI.PrefixLabel(position, new GUIContent(property.displayName));
+                int oldIndent = EditorGUI.indentLevel;
+                EditorGUI.indentLevel = 0;
                 property.intValue = EditorGUI.Popup(position, property.intValue, AllChannelContent(mixerIndex.intValue));
+                EditorGUI.indentLevel = oldIndent;
 
                 // Restore old indent
                 EditorGUI.indentLevel--;

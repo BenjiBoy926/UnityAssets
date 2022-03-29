@@ -6,49 +6,51 @@ using UnityEngine.Audio;
 namespace AudioLibrary
 {
     [System.Serializable]
-    public class AudioPool
+    public class AudioChannelPool
     {
         #region Private Editor Fields
         [SerializeField]
         [Tooltip("List of audio sources in the pool")]
-        private AudioSource[] sources;
+        private AudioSource[] pool;
+        [SerializeField]
+        [Tooltip("Game object that each of the audio sources are attached under")]
+        private GameObject gameObject;
+        [SerializeField]
+        [Tooltip("Index of the audio channel in the audio settings")]
+        private AudioChannelIndex index;
         [SerializeField]
         [Tooltip("Current audio source that will be played " +
             "on the next auto play")]
         private int current = 0;
         #endregion
 
-        #region Private Fields
-        private int channelIndex;
-        #endregion
-
         #region Constructors
-        public AudioPool(int channelIndex, GameObject parent)
+        public AudioChannelPool(int mixerIndex, int channelIndex, GameObject parent)
         {
             // Set this template channel
-            this.channelIndex = channelIndex;
+            index = new AudioChannelIndex(channelIndex, mixerIndex);
 
             // Get the channel referenced by the index
             AudioChannel channel = AudioSettings.GetChannel(channelIndex);
 
-            // Initialize the array
-            sources = new AudioSource[channel.AudioSourceCount];
-
             // Create an object under my transform
-            GameObject self = new GameObject($"Output: '{channel.Output.name}'");
-            self.transform.SetParent(parent.transform);
+            gameObject = new GameObject($"Output {channelIndex}: '{channel.Output}'");
+            gameObject.transform.SetParent(parent.transform);
+
+            // Initialize the array
+            pool = new AudioSource[channel.AudioSourceCount];
 
             // Create an audio source for each element in the array
-            for (int i = 0; i < sources.Length; i++)
+            for (int i = 0; i < pool.Length; i++)
             {
                 // Create an object for the source and set its parent
-                GameObject sourceObject = new GameObject($"Source {i}: '{channel.Output.name}'");
-                sourceObject.transform.SetParent(self.transform);
+                GameObject sourceObject = new GameObject($"Source {i}");
+                sourceObject.transform.SetParent(gameObject.transform);
 
                 // Add the audio source and set it up
-                sources[i] = sourceObject.AddComponent<AudioSource>();
-                sources[i].outputAudioMixerGroup = channel.Output;
-                sources[i].playOnAwake = false;
+                pool[i] = sourceObject.AddComponent<AudioSource>();
+                pool[i].outputAudioMixerGroup = channel.Output;
+                pool[i].playOnAwake = false;
             }
         }
         #endregion
@@ -62,12 +64,12 @@ namespace AudioLibrary
             // Return the source that played the clip
             return source;
         }
-        public AudioSource Play(AudioClip clip, int index, bool looping)
+        public AudioSource Play(AudioClip clip, int sourceIndex, bool looping)
         {
-            if (index >= 0 && index < sources.Length)
+            if (sourceIndex >= 0 && sourceIndex < pool.Length)
             {
                 // Get the audio source
-                AudioSource source = sources[index];
+                AudioSource source = pool[sourceIndex];
                 bool wasPlaying = source.isPlaying;
 
                 // Play the source
@@ -92,8 +94,8 @@ namespace AudioLibrary
                 return source;
             }
             else throw new System.IndexOutOfRangeException(
-                $"No audio source associated with index {index}. " +
-                $"Total audio sources: {sources.Length}");
+                $"No audio source associated with index {sourceIndex}. " +
+                $"Total audio sources: {pool.Length}");
         }
         #endregion
 
@@ -104,13 +106,13 @@ namespace AudioLibrary
             int start = current;
 
             // Update current to the next source
-            current = (current + 1) % sources.Length;
+            current = (current + 1) % pool.Length;
 
             // Continue to loop until we find a source that is not playing
             // or until we loop all the way around to the start again
-            while (current != start && sources[current].isPlaying)
+            while (current != start && pool[current].isPlaying)
             {
-                current = (current + 1) % sources.Length;
+                current = (current + 1) % pool.Length;
             }
         }
         #endregion

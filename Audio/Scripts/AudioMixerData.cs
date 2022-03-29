@@ -15,8 +15,48 @@ namespace AudioLibrary
         #region Public Properties
         public AudioMixer Mixer => mixer;
         public OptionalAudioChannel MasterChannel => masterChannel;
+        public int MasterChannelIndex
+        {
+            get
+            {
+                if (MasterChannel.HasChannel) return 0;
+                else throw new System.InvalidOperationException(
+                    $"Audio mixer data '{mixer}' has no master channel set up");
+            }
+        }
         public OptionalAudioChannel MusicChannel => musicChannel;
+        public int MusicChannelIndex
+        {
+            get
+            {
+                if (MusicChannel.HasChannel)
+                {
+                    if (masterChannel.HasChannel) return 1;
+                    else return 0;
+                }
+                else throw new System.InvalidOperationException(
+                    $"Audio mixer data '{mixer}' has no music channel set up");
+            }
+        }
         public OptionalAudioChannel SFXChannel => sfxChannel;
+        public int SFXChannelIndex
+        {
+            get
+            {
+                if (SFXChannel.HasChannel)
+                {
+                    if (masterChannel.HasChannel)
+                    {
+                        if (musicChannel.HasChannel) return 2;
+                        else return 1;
+                    }
+                    else if (musicChannel.HasChannel) return 1;
+                    else return 0;
+                }
+                else throw new System.InvalidOperationException(
+                    $"Audio mixer data '{mixer}' has no sfx channel set up");
+            }
+        }
         public AudioChannel[] AdditionalChannels => additionalChannels;
         public AudioChannel[] AllChannels
         {

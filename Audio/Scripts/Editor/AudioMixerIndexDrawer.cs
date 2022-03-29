@@ -16,7 +16,12 @@ namespace AudioLibrary.Editor
             // Go to first property
             property.Next(true);
             position = EditorGUI.PrefixLabel(position, label);
+
+            // Edit the int as a popup
+            int oldIndent = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
             property.intValue = EditorGUI.Popup(position, property.intValue, AllMixerContent());
+            EditorGUI.indentLevel = oldIndent;
         }
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {

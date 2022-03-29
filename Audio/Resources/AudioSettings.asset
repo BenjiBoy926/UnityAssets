@@ -12,16 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fac1cc45a3b93540ab9a33fcb20b48f, type: 3}
   m_Name: AudioSettings
   m_EditorClassIdentifier: 
-  master: {fileID: 24300002, guid: 0ad6eeacad8bc59439a58270a63b2121, type: 2}
-  musicChannel:
-    output: {fileID: 5133520011512078235, guid: 0ad6eeacad8bc59439a58270a63b2121,
-      type: 2}
-    audioSourceCount: 2
-  sfxChannel:
-    output: {fileID: 7856134110187767691, guid: 0ad6eeacad8bc59439a58270a63b2121,
-      type: 2}
-    audioSourceCount: 8
-  additionalChannels: []
   defaultMixer:
     mixer: {fileID: 24100000, guid: 0ad6eeacad8bc59439a58270a63b2121, type: 2}
     masterChannel:
@@ -43,7 +33,3 @@ MonoBehaviour:
         audioSourceCount: 8
     additionalChannels: []
   additionalMixers: []
-  test:
-    mixerIndex:
-      index: 0
-    channelIndex: 2

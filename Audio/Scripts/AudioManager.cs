@@ -21,7 +21,7 @@ namespace AudioLibrary
         #region Private Editor Fields
         [SerializeField]
         [Tooltip("List of all audio pools used to play audio")]
-        private AudioPool[] audioPools = new AudioPool[0];
+        private AudioMixerPool[] audioPools = new AudioMixerPool[0];
         #endregion
 
         #region Private Fields
@@ -32,12 +32,13 @@ namespace AudioLibrary
         private void Setup()
         {
             // Create an audio pool for each audio channel
-            audioPools = new AudioPool[AudioSettings.ChannelCount];
+            AudioMixerData[] allMixers = AudioSettings.AllMixers;
+            audioPools = new AudioMixerPool[allMixers.Length];
 
             // Setup an audio pool for every audio channel
             for (int i = 0; i < audioPools.Length; i++)
             {
-                audioPools[i] = new AudioPool(i, gameObject);
+                audioPools[i] = new AudioMixerPool(i, gameObject);
             }
         }
         private static AudioManager Create()
@@ -55,57 +56,92 @@ namespace AudioLibrary
         #endregion
 
         #region Play Methods
-        // Music
-        public static AudioSource PlayMusic(AudioClip clip, bool looping = false)
+        // Master channel
+        public static AudioSource PlayMaster(AudioClip clip, AudioMixerIndex index, bool looping = false)
         {
-            return Play(clip, 0, looping);
+            return PlayMaster(clip, looping, index.Index);
         }
-        public static AudioSource PlayMusic(AudioClip clip, int sourceIndex, bool looping = false)
+        public static AudioSource PlayMaster(AudioClip clip, bool looping = false, int mixerIndex = 0)
         {
-            return Play(clip, 0, sourceIndex, looping);
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            {
+                return Instance.audioPools[mixerIndex].PlayMaster(clip, looping);
+            }
+            else throw IndexOutOfRangeException(mixerIndex);
         }
 
-        // SFX
-        public static AudioSource PlaySFX(AudioClip clip, bool looping = false)
+        // Music channel
+        public static AudioSource PlayMusic(AudioClip clip, AudioMixerIndex index, bool looping = false)
         {
-            return Play(clip, 1, looping);
+            return PlayMusic(clip, looping, index.Index);
         }
-        public static AudioSource PlaySFX(AudioClip clip, int sourceIndex, bool looping = false)
+        public static AudioSource PlayMusic(AudioClip clip, bool looping = false, int mixerIndex = 0)
         {
-            return Play(clip, 1, sourceIndex, looping);
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            {
+                return Instance.audioPools[mixerIndex].PlayMusic(clip, looping);
+            }
+            else throw IndexOutOfRangeException(mixerIndex);
         }
 
-        // General play
-        public static AudioSource Play(AudioClip clip, AudioChannelIndex index, bool looping = false)
+        // Music channel
+        public static AudioSource PlaySFX(AudioClip clip, AudioMixerIndex index, bool looping = false)
         {
-            return Play(clip, index.ChannelIndex, looping);
+            return PlaySFX(clip, looping, index.Index);
         }
-        public static AudioSource Play(AudioClip clip, AudioChannelIndex index, int sourceIndex, bool looping = false)
+        public static AudioSource PlaySFX(AudioClip clip, bool looping = false, int mixerIndex = 0)
         {
-            return Play(clip, index.ChannelIndex, sourceIndex, looping);
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            {
+                return Instance.audioPools[mixerIndex].PlaySFX(clip, looping);
+            }
+            else throw IndexOutOfRangeException(mixerIndex);
         }
-        public static AudioSource Play(AudioClip clip, int poolIndex, bool looping = false)
+
+        // Arbitrary channel
+        public static AudioSource PlayFromChannel(AudioClip clip, AudioChannelIndex index, bool looping = false)
+        {
+            return PlayFromChannel(clip, index.MixerIndex, index.ChannelIndex, looping);
+        }
+        public static AudioSource PlayFromChannel(AudioClip clip, AudioChannelIndex index, int sourceIndex, bool looping = false)
+        {
+            return PlayFromChannel(clip, index.MixerIndex, index.ChannelIndex, sourceIndex, looping);
+        }
+        public static AudioSource PlayFromChannel(AudioClip clip, AudioMixerIndex mixerIndex, int channelIndex, bool looping = false)
+        {
+            return PlayFromChannel(clip, channelIndex, looping, mixerIndex.Index);
+        }
+        public static AudioSource PlayFromChannel(AudioClip clip, AudioMixerIndex mixerIndex, int channelIndex, int sourceIndex, bool looping = false)
+        {
+            return PlayFromChannel(clip, channelIndex, sourceIndex, looping, mixerIndex.Index);
+        }
+        public static AudioSource PlayFromChannel(AudioClip clip, int channelIndex, bool looping = false, int mixerIndex = 0)
         {
             // If the index is in range then play from the pool
-            if (poolIndex >= 0 && poolIndex < Instance.audioPools.Length)
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
             {
-                return Instance.audioPools[poolIndex].Play(clip, looping);
+                return Instance.audioPools[mixerIndex].PlayFromChannel(clip, channelIndex, looping);
             }
             // throw an exception if the index is out of range
-            else throw new System.IndexOutOfRangeException(
-                $"No audio pool associated with {poolIndex}. " +
-                $"Total pools: {Instance.audioPools}");
+            else throw IndexOutOfRangeException(mixerIndex);
         }
-        public static AudioSource Play(AudioClip clip, int poolIndex, int sourceIndex, bool looping = false)
+        public static AudioSource PlayFromChannel(AudioClip clip, int channelIndex, int sourceIndex, bool looping = false, int mixerIndex = 0)
         {
             // If the index is in range then play from the pool
-            if (poolIndex >= 0 && poolIndex < Instance.audioPools.Length)
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
             {
-                return Instance.audioPools[poolIndex].Play(clip, sourceIndex, looping);
+                return Instance.audioPools[mixerIndex].PlayFromChannel(clip, channelIndex, sourceIndex, looping);
             }
             // throw an exception if the index is out of range
-            else throw new System.IndexOutOfRangeException(
-                $"No audio pool associated with {poolIndex}. " +
+            else throw IndexOutOfRangeException(mixerIndex);
+        }
+        #endregion
+
+        #region Private Methods
+        private static System.IndexOutOfRangeException IndexOutOfRangeException(int mixerIndex)
+        {
+            return new System.IndexOutOfRangeException(
+                $"No audio pool associated with {mixerIndex}. " +
                 $"Total pools: {Instance.audioPools}");
         }
         #endregion
