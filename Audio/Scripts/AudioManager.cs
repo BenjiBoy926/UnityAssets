@@ -78,11 +78,11 @@ namespace AudioLibrary
         // General play
         public static AudioSource Play(AudioClip clip, AudioChannelIndex index, bool looping = false)
         {
-            return Play(clip, index.Index, looping);
+            return Play(clip, index.ChannelIndex, looping);
         }
         public static AudioSource Play(AudioClip clip, AudioChannelIndex index, int sourceIndex, bool looping = false)
         {
-            return Play(clip, index.Index, sourceIndex, looping);
+            return Play(clip, index.ChannelIndex, sourceIndex, looping);
         }
         public static AudioSource Play(AudioClip clip, int poolIndex, bool looping = false)
         {

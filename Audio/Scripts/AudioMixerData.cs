@@ -55,5 +55,20 @@ namespace AudioLibrary
         [Tooltip("List of additional channels for this mixer")]
         private AudioChannel[] additionalChannels;
         #endregion
+
+        #region Public Methods
+        public AudioChannel GetChannel(int index)
+        {
+            AudioChannel[] allChannels = AllChannels;
+
+            if (index >= 0 && index < allChannels.Length)
+            {
+                return allChannels[index];
+            }
+            else throw new System.IndexOutOfRangeException(
+                $"No channel associated with index '{index}' " +
+                $"for mixer '{mixer}'. Total channels: {allChannels.Length}");
+        }
+        #endregion
     }
 }

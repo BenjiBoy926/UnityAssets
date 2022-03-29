@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEditor;
 
 namespace AudioLibrary.Editor
@@ -13,30 +14,45 @@ namespace AudioLibrary.Editor
         #region Property Drawer Overrides
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            // Go to the first sub-property
-            property.Next(true);
+            // Edit the foldout
+            property.isExpanded = EditorGUIAuto.Foldout(ref position, property.isExpanded, label);
 
-            // Get a list of the names of the audio mixer outputs
-            GUIContent[] additionalChannelNames = AudioSettings
-                .AdditionalChannels
-                .Select(channel => new GUIContent(channel.Output.name))
-                .ToArray();
+            if (property.isExpanded)
+            {
+                // Increase indent
+                EditorGUI.indentLevel++;
 
-            GUIContent[] allChannelNames = new GUIContent[2 + additionalChannelNames.Length];
+                // Edit the first sub property
+                property.Next(true);
+                EditorGUIAuto.PropertyField(ref position, property, true);
 
-            // Add names for music then SFX
-            allChannelNames[0] = new GUIContent(AudioSettings.MusicChannel.Output.name);
-            allChannelNames[1] = new GUIContent(AudioSettings.SFXChannel.Output.name);
+                // Display the popup for the channel
+                SerializedProperty mixerIndex = property.FindPropertyRelative("index");
+                property.Next(false);
+                position = EditorGUI.PrefixLabel(position, new GUIContent(property.displayName));
+                property.intValue = EditorGUI.Popup(position, property.intValue, AllChannelContent(mixerIndex.intValue));
 
-            // Copy in additional channel names
-            Array.Copy(additionalChannelNames, 0, allChannelNames, 2, additionalChannelNames.Length);
-
-            // Use a popup to select a channel
-            property.intValue = EditorGUI.Popup(position, label, property.intValue, additionalChannelNames);
+                // Restore old indent
+                EditorGUI.indentLevel--;
+            }
         }
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight;
+            if (property.isExpanded) return EditorGUIUtility.singleLineHeight * 3f;
+            else return EditorGUIUtility.singleLineHeight;
+        }
+        #endregion
+
+        #region Public Methods
+        public static GUIContent[] AllChannelContent(int mixerIndex)
+        {
+            // Get the mixer at the given index
+            AudioMixerData mixer = AudioSettings.GetMixer(mixerIndex);
+
+            return mixer
+                .AllChannels
+                .Select(channel => new GUIContent(EditorGUIUtility.ObjectContent(channel.Output, typeof(AudioMixerGroup))))
+                .ToArray();
         }
         #endregion
     }

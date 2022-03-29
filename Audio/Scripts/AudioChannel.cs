@@ -6,7 +6,7 @@ using UnityEngine.Audio;
 namespace AudioLibrary
 {
     [System.Serializable]
-    public struct AudioChannel
+    public class AudioChannel
     {
         #region Public Properties
         public AudioMixerGroup Output => output;

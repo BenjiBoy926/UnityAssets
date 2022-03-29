@@ -5,23 +5,33 @@ using UnityEngine;
 namespace AudioLibrary
 {
     [System.Serializable]
-    public struct AudioChannelIndex
+    public class AudioChannelIndex
     {
         #region Public Properties
-        public int Index => index;
+        public AudioMixerIndex MixerIndex => mixerIndex;
+        public int ChannelIndex => channelIndex;
         public AudioChannel Channel => AudioSettings.GetChannel(this);
         #endregion
 
         #region Private Editor Fields
         [SerializeField]
-        [Tooltip("Index of the sound channel in the sound settings")]
-        private int index;
+        [Tooltip("Index of the audio mixer's data")]
+        private AudioMixerIndex mixerIndex;
+        [SerializeField]
+        [Tooltip("Index of the sound channel in the mixer's data")]
+        private int channelIndex;
         #endregion
 
-        #region Constructors
-        public AudioChannelIndex(int index)
+        #region Constructors 
+        public AudioChannelIndex(int channelIndex, int mixerIndex = 0) :
+            this(channelIndex, new AudioMixerIndex(mixerIndex))
         {
-            this.index = index;
+
+        }
+        public AudioChannelIndex(int channelIndex, AudioMixerIndex mixerIndex)
+        {
+            this.mixerIndex = mixerIndex;
+            this.channelIndex = channelIndex;
         }
         #endregion
     }

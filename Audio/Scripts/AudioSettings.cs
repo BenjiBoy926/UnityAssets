@@ -52,32 +52,6 @@ namespace AudioLibrary
         #endregion
 
         #region Public Access Methods
-        public static AudioChannel GetChannel(AudioChannelIndex index)
-        {
-            return GetChannel(index.Index);
-        }
-        public static AudioChannel GetChannel(int index)
-        {
-            // If the index is 0 then return music channel
-            if (index == 0) return MusicChannel;
-            // If index is 1 then reteurn sfx channel
-            else if (index == 1) return SFXChannel;
-            // If something other than 0 or 1 then return an additional channel
-            else return GetAdditionalChannel(index - 2);
-        }
-        public static AudioChannel GetAdditionalChannel(int index)
-        {
-            // If index is in range then return it
-            if (index >= 0 && index < AdditionalChannels.Length)
-            {
-                return AdditionalChannels[index];
-            }
-            // If not found then throw an exception
-            else throw new IndexOutOfRangeException(
-                $"No additional sound channel associated with index '{index}'. " +
-                $"Total channels: {AdditionalChannels.Length}");
-        }
-
         public static AudioMixerData GetMixer(AudioMixerIndex index)
         {
             return GetMixer(index.Index);
@@ -95,6 +69,15 @@ namespace AudioLibrary
             else throw new IndexOutOfRangeException(
                 $"No audio mixer data associated with index '{index}'. " +
                 $"Total mixers: {mixers.Length}");
+        }
+        public static AudioChannel GetChannel(AudioChannelIndex index)
+        {
+            return GetChannel(index.ChannelIndex, index.MixerIndex.Index);
+        }
+        public static AudioChannel GetChannel(int channelIndex, int mixerIndex = 0)
+        {
+            AudioMixerData mixer = GetMixer(mixerIndex);
+            return mixer.GetChannel(channelIndex);
         }
         #endregion
 
@@ -144,7 +127,7 @@ namespace AudioLibrary
             }
 
             // Return true if the index is valid
-            return index.Index >= 0;
+            return index.ChannelIndex >= 0;
         }
         #endregion
     }

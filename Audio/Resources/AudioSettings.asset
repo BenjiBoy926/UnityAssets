@@ -43,3 +43,7 @@ MonoBehaviour:
         audioSourceCount: 8
     additionalChannels: []
   additionalMixers: []
+  test:
+    mixerIndex:
+      index: 0
+    channelIndex: 2
