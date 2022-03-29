@@ -11,14 +11,38 @@ namespace AudioLibrary.Editor
         #region Property Drawer Overrides
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            // Get the properties
             SerializedProperty hasChannel = property.FindPropertyRelative(nameof(hasChannel));
             SerializedProperty channel = property.FindPropertyRelative(nameof(channel));
 
-            EditorGUI.PropertyField(position, property, label, true);
+            // Use a toggle to display the hasChannel property 
+            hasChannel.boolValue = EditorGUIAuto.ToggleLeft(ref position, label, hasChannel.boolValue);
+        
+            if (hasChannel.boolValue)
+            {
+                // Layout the channel without the foldout
+                EditorGUI.indentLevel++;
+                AudioChannelDrawer.OnGUIWithoutFoldout(ref position, channel);
+                EditorGUI.indentLevel--;
+            }
         }
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUI.GetPropertyHeight(property, label, true);
+            // Height for a single control
+            float height = EditorGUIAuto.SingleControlHeight;
+
+            // Get the properties
+            SerializedProperty hasChannel = property.FindPropertyRelative(nameof(hasChannel));
+            SerializedProperty channel = property.FindPropertyRelative(nameof(channel));
+
+            if (hasChannel.boolValue)
+            {
+                // Layout the channel without the foldout
+                height += AudioChannelDrawer.GetPropertyHeightWithoutFoldout(channel);
+            }
+
+            // Return the height
+            return height;
         }
         #endregion
     }

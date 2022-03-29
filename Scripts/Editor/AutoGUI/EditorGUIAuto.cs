@@ -105,6 +105,22 @@ public class EditorGUIAuto
     }
     #endregion
 
+    #region ToggleLeft Field
+    public static bool ToggleLeft(ref Rect position, string label, bool value, GUIStyle style = null)
+    {
+        return ToggleLeft(ref position, new GUIContent(label), value, style);
+    }
+    public static bool ToggleLeft(ref Rect position, GUIContent label, bool value, GUIStyle style = null)
+    {
+        if (style == null) style = EditorStyles.label;
+
+        position.height = SingleControlHeight;
+        bool result = EditorGUI.ToggleLeft(position, label, value, style);
+        position.y += position.height;
+        return result;
+    }
+    #endregion
+
     #region Custom Methods
     public static SerializedProperty[] GetArrayElements(SerializedProperty array)
     {

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,18 @@ namespace AudioLibrary
         public static AudioChannel SFXChannel => Instance.sfxChannel;
         public static AudioChannel[] AdditionalChannels => Instance.additionalChannels;
         public static int ChannelCount => 2 + AdditionalChannels.Length;
+        public static AudioMixerData DefaultMixer => Instance.defaultMixer;
+        public static AudioMixerData[] AdditionalMixers => Instance.additionalMixers;
+        public static AudioMixerData[] AllMixers
+        {
+            get
+            {
+                AudioMixerData[] result = new AudioMixerData[AdditionalMixers.Length + 1];
+                result[0] = DefaultMixer;
+                AdditionalMixers.CopyTo(result, 1);
+                return result;
+            }
+        }
         #endregion
 
         #region Private Editor Fields
@@ -33,6 +46,9 @@ namespace AudioLibrary
         [SerializeField]
         [Tooltip("Default audio mixer for the audio settings")]
         private AudioMixerData defaultMixer;
+        [SerializeField]
+        [Tooltip("List of additional audio mixers for the audio settings")]
+        private AudioMixerData[] additionalMixers = new AudioMixerData[0];
         #endregion
 
         #region Public Access Methods
@@ -47,7 +63,7 @@ namespace AudioLibrary
             // If index is 1 then reteurn sfx channel
             else if (index == 1) return SFXChannel;
             // If something other than 0 or 1 then return an additional channel
-            else return new AudioChannel();
+            else return GetAdditionalChannel(index - 2);
         }
         public static AudioChannel GetAdditionalChannel(int index)
         {
@@ -60,6 +76,25 @@ namespace AudioLibrary
             else throw new IndexOutOfRangeException(
                 $"No additional sound channel associated with index '{index}'. " +
                 $"Total channels: {AdditionalChannels.Length}");
+        }
+
+        public static AudioMixerData GetMixer(AudioMixerIndex index)
+        {
+            return GetMixer(index.Index);
+        }
+        public static AudioMixerData GetMixer(int index)
+        {
+            AudioMixerData[] mixers = AllMixers;
+
+            // If index is in range then return the correct mixer
+            if (index >= 0 && index < mixers.Length)
+            {
+                return mixers[index];
+            }
+            // If index is out of range then throw an exception
+            else throw new IndexOutOfRangeException(
+                $"No audio mixer data associated with index '{index}'. " +
+                $"Total mixers: {mixers.Length}");
         }
         #endregion
 

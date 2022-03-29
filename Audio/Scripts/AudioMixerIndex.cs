@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioMixerIndex : MonoBehaviour
+namespace AudioLibrary
 {
-    // Start is called before the first frame update
-    void Start()
+    [System.Serializable]
+    public class AudioMixerIndex
     {
-        
-    }
+        #region Public Properties
+        public int Index => index;
+        public AudioMixerData Data => AudioSettings.GetMixer(this);
+        #endregion
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        #region Private Editor Fields
+        [SerializeField]
+        [Tooltip("Index of the audio mixer in the audio settings")]
+        private int index;
+        #endregion
     }
 }
