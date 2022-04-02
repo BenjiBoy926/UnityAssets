@@ -23,12 +23,11 @@ namespace AudioLibrary
         #endregion
 
         #region Constructors 
-        public AudioChannelIndex(int channelIndex, int mixerIndex = 0) :
-            this(channelIndex, new AudioMixerIndex(mixerIndex))
-        {
-
-        }
-        public AudioChannelIndex(int channelIndex, AudioMixerIndex mixerIndex)
+        public AudioChannelIndex(int channelIndex) : 
+            this(channelIndex, 0) {}
+        public AudioChannelIndex(int mixerIndex, int channelIndex) : 
+            this(new AudioMixerIndex(mixerIndex), channelIndex) {}
+        public AudioChannelIndex(AudioMixerIndex mixerIndex, int channelIndex)
         {
             this.mixerIndex = mixerIndex;
             this.channelIndex = channelIndex;

@@ -9,28 +9,31 @@ namespace AudioLibrary
     public class AudioChannelControls : MonoBehaviour
     {
         #region Public Properties
-        public AudioChannelIndex Index
+        public AudioChannelIndex ChannelIndex
         {
-            get => index;
+            get => channelIndex;
             set
             {
-                index = value;
+                channelIndex = value;
                 UpdateUI();
             }
         }
-        public string MissingParameterWarning => AudioDashboard.GetMissingParameterWarning(index);
-        public AudioMixer Mixer => index.MixerIndex.Data.Mixer;
-        public AudioMixerGroup Output => index.Channel.Output;
-        public string VolumeParameterName => AudioDashboard.GetVolumeParameterName(index);
+        public string MissingParameterWarning => AudioDashboard.GetMissingParameterWarning(channelIndex);
+        public AudioMixer Mixer => channelIndex.MixerIndex.Data.Mixer;
+        public AudioMixerGroup Output => channelIndex.Channel.Output;
+        public string VolumeParameterName => AudioDashboard.GetVolumeParameterName(channelIndex);
         #endregion
 
         #region Private Editor Fields
         [SerializeField]
         [Tooltip("Index of the channel in the audio settings")]
-        private AudioChannelIndex index;
+        private AudioChannelIndex channelIndex;
         [SerializeField]
         [Tooltip("Reference to the slider that changes the volume for this channel")]
         private Slider volumeSlider;
+        [SerializeField]
+        [Tooltip("Text component that displays the current volume")]
+        private Text volumeText;
         [SerializeField]
         [Tooltip("Reference to the toggle that mutes this channel")]
         private Toggle muteToggle;
@@ -57,27 +60,31 @@ namespace AudioLibrary
                 volumeSlider.maxValue = 100f;
 
                 // If we get a float then set the slider value
-                if (Mixer.GetFloat(VolumeParameterName, out float decibels))
+                volumeSlider.SetValueWithoutNotify(AudioDashboard.GetVolume(channelIndex));
+
+                if (volumeSlider.value > 0f)
                 {
-                    volumeSlider.SetValueWithoutNotify(AudioDashboard.DecibelsToVolume(decibels));
+                    unmutedVolume = volumeSlider.value;
                 }
+            }
+
+            // If the text exists then set it
+            if (volumeText)
+            {
+                volumeText.text = $"Volume: {volumeSlider.value}%";
             }
 
             // If we have a mute toggle then set it up
             if (muteToggle)
             {
-                // Set mute toggle on if volume is very low
-                if (Mixer.GetFloat(VolumeParameterName, out float decibels))
-                {
-                    float volume = AudioDashboard.DecibelsToVolume(decibels);
-                    muteToggle.SetIsOnWithoutNotify(volume <= 0.001f);
-                }
+                float volume = AudioDashboard.GetVolume(channelIndex);
+                muteToggle.SetIsOnWithoutNotify(volume < 1f);
             }
 
             // If we have title text then set it up
             if (titleText)
             {
-                titleText.text = $"{index.Channel.Output.name} Volume";
+                titleText.text = $"{channelIndex.Channel.Output.name} Channel";
             }
         }
         /// <summary>
@@ -86,8 +93,11 @@ namespace AudioLibrary
         /// </summary>
         public void ApplyUI()
         {
-            if (muteToggle.isOn) AudioDashboard.SetVolume(index, 0f);
-            else AudioDashboard.SetVolume(index, volumeSlider.value);
+            if (muteToggle.isOn) AudioDashboard.SetVolume(channelIndex, 0f);
+            else AudioDashboard.SetVolume(channelIndex, volumeSlider.value);
+
+            // Set the volume text
+            volumeText.text = $"Volume: {volumeSlider.value}%";
         }
         #endregion
 
@@ -102,6 +112,14 @@ namespace AudioLibrary
         }
         private void OnValidate()
         {
+            UpdateUI();
+        }
+        public void Reset()
+        {
+            AudioDashboard.ResetDecibels(channelIndex);
+            Debug.Log(AudioDashboard.GetVolume(channelIndex));
+
+            // NOTE: have to wait until it finishes transitioning for this to work
             UpdateUI();
         }
         #endregion

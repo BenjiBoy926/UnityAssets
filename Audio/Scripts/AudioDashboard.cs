@@ -22,6 +22,18 @@ namespace AudioLibrary
         {
             return $"{index.Channel.Output.name}Volume";
         }
+        // Change this to return true or false
+        public static void ResetDecibels(AudioChannelIndex index)
+        {
+            AudioMixer mixer = index.MixerIndex.Data.Mixer;
+            bool success = mixer.ClearFloat(GetVolumeParameterName(index));
+
+            if (!success)
+            {
+                Debug.LogWarning(GetMissingParameterWarning(index));
+            }
+        }
+        // Change this to not throw and instead use an "out" parameter
         public static float GetDecibels(AudioChannelIndex index)
         {
             AudioMixer mixer = index.MixerIndex.Data.Mixer;
@@ -31,10 +43,12 @@ namespace AudioLibrary
             }
             else throw new System.InvalidOperationException(GetMissingParameterWarning(index));
         }
+        // Change this to not throw and instead use an "out" parameter
         public static float GetVolume(AudioChannelIndex index)
         {
             return DecibelsToVolume(GetDecibels(index));
         }
+        // Change this to return true or false
         public static void SetVolume(AudioChannelIndex index, float volume)
         {
             AudioMixer mixer = index.MixerIndex.Data.Mixer;
