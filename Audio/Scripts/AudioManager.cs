@@ -57,11 +57,19 @@ namespace AudioLibrary
 
         #region Play Methods
         // Master channel
+        public static AudioSource PlayMaster(AudioClip clip, bool looping = false)
+        {
+            return PlayMaster(clip, 0, looping);
+        }
         public static AudioSource PlayMaster(AudioClip clip, AudioMixerIndex index, bool looping = false)
         {
-            return PlayMaster(clip, looping, index.Index);
+            return PlayMaster(clip, index.Index, looping);
         }
-        public static AudioSource PlayMaster(AudioClip clip, bool looping = false, int mixerIndex = 0)
+        public static AudioSource PlayMaster(AudioClip clip, AudioMixerIndex index, int sourceIndex, bool looping = false)
+        {
+            return PlayMaster(clip, index.Index, sourceIndex, looping);
+        }
+        public static AudioSource PlayMaster(AudioClip clip, int mixerIndex, bool looping = false)
         {
             if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
             {
@@ -69,13 +77,30 @@ namespace AudioLibrary
             }
             else throw IndexOutOfRangeException(mixerIndex);
         }
+        public static AudioSource PlayMaster(AudioClip clip, int mixerIndex, int sourceIndex, bool looping = false)
+        {
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            {
+                return Instance.audioPools[mixerIndex].PlayMaster(clip, sourceIndex, looping);
+            }
+            else throw IndexOutOfRangeException(mixerIndex);
+        }
+
 
         // Music channel
+        public static AudioSource PlayMusic(AudioClip clip, bool looping = false)
+        {
+            return PlayMusic(clip, 0, looping);
+        }
         public static AudioSource PlayMusic(AudioClip clip, AudioMixerIndex index, bool looping = false)
         {
-            return PlayMusic(clip, looping, index.Index);
+            return PlayMusic(clip, index.Index, looping);
         }
-        public static AudioSource PlayMusic(AudioClip clip, bool looping = false, int mixerIndex = 0)
+        public static AudioSource PlayMusic(AudioClip clip, AudioMixerIndex index, int sourceIndex, bool looping = false)
+        {
+            return PlayMusic(clip, index.Index, sourceIndex, looping);
+        }
+        public static AudioSource PlayMusic(AudioClip clip, int mixerIndex, bool looping = false)
         {
             if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
             {
@@ -83,13 +108,29 @@ namespace AudioLibrary
             }
             else throw IndexOutOfRangeException(mixerIndex);
         }
+        public static AudioSource PlayMusic(AudioClip clip, int mixerIndex, int sourceIndex, bool looping = false)
+        {
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            {
+                return Instance.audioPools[mixerIndex].PlayMusic(clip, sourceIndex, looping);
+            }
+            else throw IndexOutOfRangeException(mixerIndex);
+        }
 
-        // Music channel
+        // SFX channel
+        public static AudioSource PlaySFX(AudioClip clip, bool looping = false)
+        {
+            return PlaySFX(clip, 0, looping);
+        }
         public static AudioSource PlaySFX(AudioClip clip, AudioMixerIndex index, bool looping = false)
         {
-            return PlaySFX(clip, looping, index.Index);
+            return PlaySFX(clip, index.Index, looping);
         }
-        public static AudioSource PlaySFX(AudioClip clip, bool looping = false, int mixerIndex = 0)
+        public static AudioSource PlaySFX(AudioClip clip, AudioMixerIndex index, int sourceIndex, bool looping = false)
+        {
+            return PlaySFX(clip, index.Index, sourceIndex, looping);
+        } 
+        public static AudioSource PlaySFX(AudioClip clip, int mixerIndex, bool looping = false)
         {
             if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
             {
@@ -97,42 +138,42 @@ namespace AudioLibrary
             }
             else throw IndexOutOfRangeException(mixerIndex);
         }
+        public static AudioSource PlaySFX(AudioClip clip, int mixerIndex, int sourceIndex, bool looping = false)
+        {
+            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            {
+                return Instance.audioPools[mixerIndex].PlaySFX(clip, sourceIndex, looping);
+            }
+            else throw IndexOutOfRangeException(mixerIndex);
+        }
 
         // Arbitrary channel
+        public static AudioSource PlayFromChannel(AudioClip clip, int channelIndex, bool looping = false)
+        {
+            return PlayFromChannel(clip, 0, channelIndex, looping);
+        }
         public static AudioSource PlayFromChannel(AudioClip clip, AudioChannelIndex index, bool looping = false)
         {
-            return PlayFromChannel(clip, index.MixerIndex, index.ChannelIndex, looping);
+            return PlayFromChannel(clip, index.MixerIndex.Index, index.ChannelIndex, looping);
         }
         public static AudioSource PlayFromChannel(AudioClip clip, AudioChannelIndex index, int sourceIndex, bool looping = false)
         {
-            return PlayFromChannel(clip, index.MixerIndex, index.ChannelIndex, sourceIndex, looping);
+            return PlayFromChannel(clip, index.MixerIndex.Index, index.ChannelIndex, sourceIndex, looping);
         }
-        public static AudioSource PlayFromChannel(AudioClip clip, AudioMixerIndex mixerIndex, int channelIndex, bool looping = false)
+        public static AudioSource PlayFromChannel(AudioClip clip, int mixerIndex, int channelIndex, bool looping = false)
         {
-            return PlayFromChannel(clip, channelIndex, looping, mixerIndex.Index);
-        }
-        public static AudioSource PlayFromChannel(AudioClip clip, AudioMixerIndex mixerIndex, int channelIndex, int sourceIndex, bool looping = false)
-        {
-            return PlayFromChannel(clip, channelIndex, sourceIndex, looping, mixerIndex.Index);
-        }
-        public static AudioSource PlayFromChannel(AudioClip clip, int channelIndex, bool looping = false, int mixerIndex = 0)
-        {
-            // If the index is in range then play from the pool
-            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            if (mixerIndex >= 0 && mixerIndex <= Instance.audioPools.Length)
             {
                 return Instance.audioPools[mixerIndex].PlayFromChannel(clip, channelIndex, looping);
             }
-            // throw an exception if the index is out of range
             else throw IndexOutOfRangeException(mixerIndex);
         }
-        public static AudioSource PlayFromChannel(AudioClip clip, int channelIndex, int sourceIndex, bool looping = false, int mixerIndex = 0)
+        public static AudioSource PlayFromChannel(AudioClip clip, int mixerIndex, int channelIndex, int sourceIndex, bool looping = false)
         {
-            // If the index is in range then play from the pool
-            if (mixerIndex >= 0 && mixerIndex < Instance.audioPools.Length)
+            if (mixerIndex >= 0 && mixerIndex <= Instance.audioPools.Length)
             {
                 return Instance.audioPools[mixerIndex].PlayFromChannel(clip, channelIndex, sourceIndex, looping);
             }
-            // throw an exception if the index is out of range
             else throw IndexOutOfRangeException(mixerIndex);
         }
         #endregion

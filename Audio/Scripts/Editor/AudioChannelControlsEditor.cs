@@ -5,8 +5,8 @@ using UnityEditor;
 
 namespace AudioLibrary.Editor
 {
-    [CustomEditor(typeof(AudioChannelUI))]
-    public class AudioChannelUIEditor : UnityEditor.Editor
+    [CustomEditor(typeof(AudioChannelControls))]
+    public class AudioChannelControlsEditor : UnityEditor.Editor
     {
         #region Editor Overrides
         public override void OnInspectorGUI()
@@ -14,13 +14,13 @@ namespace AudioLibrary.Editor
             DrawDefaultInspector();
 
             // Check if the mixer has the parameter exposed
-            AudioChannelUI audioChannelUI = target as AudioChannelUI;
-            bool hasParameter = audioChannelUI.Mixer.ClearFloat(audioChannelUI.VolumeParameterName);
+            AudioChannelControls audioChannelControls = target as AudioChannelControls;
+            bool hasParameter = audioChannelControls.Mixer.ClearFloat(audioChannelControls.VolumeParameterName);
 
             // If the audio mixer does not have the parameter then show the warning in the editor
             if (!hasParameter)
             {
-                EditorGUILayout.HelpBox(audioChannelUI.MissingParameterWarning, MessageType.Warning);
+                EditorGUILayout.HelpBox(audioChannelControls.MissingParameterWarning, MessageType.Warning);
             }
         }
         #endregion

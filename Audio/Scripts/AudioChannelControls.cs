@@ -6,20 +6,19 @@ using UnityEngine.UI;
 
 namespace AudioLibrary
 {
-    public class AudioChannelUI : MonoBehaviour
+    public class AudioChannelControls : MonoBehaviour
     {
         #region Public Properties
-        public string MissingParameterWarning
+        public AudioChannelIndex Index
         {
-            get
+            get => index;
+            set
             {
-                return $"Expected audio mixer '{Mixer}' " +
-                    $"to have exposed parameter with the name '{VolumeParameterName}', " +
-                    $"but no such parameter could be found. This UI will not be " +
-                    $"able to control the volume of the audio mixer " +
-                    $"unless an exposed parameter with this name exists";
+                index = value;
+                UpdateUI();
             }
         }
+        public string MissingParameterWarning => AudioDashboard.GetMissingParameterWarning(index);
         public AudioMixer Mixer => index.MixerIndex.Data.Mixer;
         public AudioMixerGroup Output => index.Channel.Output;
         public string VolumeParameterName => AudioDashboard.GetVolumeParameterName(index);
@@ -40,12 +39,16 @@ namespace AudioLibrary
         private Text titleText;
         #endregion
 
-        #region Monobehaviour Messages
-        private void Start()
-        {
-            titleText.text = $"{index.Channel.Output.name} Channel";
-        }
-        private void OnValidate()
+        #region Private Fields
+        private float unmutedVolume;
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Update the values in the UI to reflect 
+        /// the volume of the identified channel
+        /// </summary>
+        public void UpdateUI()
         {
             // If we have volume slider then set it up
             if (volumeSlider)
@@ -74,19 +77,60 @@ namespace AudioLibrary
             // If we have title text then set it up
             if (titleText)
             {
-                titleText.text = $"{index.Channel.Output.name} Channel";
+                titleText.text = $"{index.Channel.Output.name} Volume";
             }
+        }
+        /// <summary>
+        /// Apply the values in the UI to
+        /// the volume of the identified channel
+        /// </summary>
+        public void ApplyUI()
+        {
+            if (muteToggle.isOn) AudioDashboard.SetVolume(index, 0f);
+            else AudioDashboard.SetVolume(index, volumeSlider.value);
+        }
+        #endregion
+
+        #region Monobehaviour Messages
+        private void Start()
+        {
+            UpdateUI();
+
+            // Listen for changes to the slider and toggle
+            volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+            muteToggle.onValueChanged.AddListener(OnMuteChanged);
+        }
+        private void OnValidate()
+        {
+            UpdateUI();
         }
         #endregion
 
         #region Event Listeners
         private void OnVolumeChanged(float value)
         {
+            // Enable mute toggle if the value is very low
+            muteToggle.SetIsOnWithoutNotify(value < 0.01f);
 
+            // If the value is reasonably large then set the unmuted volume
+            if (value >= 0.01f)
+            {
+                unmutedVolume = value;
+            }
+
+            ApplyUI();
         }
         private void OnMuteChanged(bool value)
         {
+            // If we muted then set the slider value to 0
+            if (value)
+            {
+                volumeSlider.SetValueWithoutNotify(0f);
+            }
+            // If we unmuted then set the slider unmuted volume
+            else volumeSlider.SetValueWithoutNotify(unmutedVolume);
 
+            ApplyUI();
         }
         #endregion
     }
