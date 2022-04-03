@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AudioLibrary
+namespace AudioUtility
 {
     [System.Serializable]
     public class AudioMixerIndex
@@ -10,7 +10,7 @@ namespace AudioLibrary
         #region Public Properties
         public int Index => index;
         public AudioMixerData Data => AudioSettings.GetMixer(this);
-        public static AudioMixerIndex Default => new AudioMixerIndex(0);
+        public static AudioMixerIndex Default => 0;
         #endregion
 
         #region Private Editor Fields
@@ -23,6 +23,13 @@ namespace AudioLibrary
         public AudioMixerIndex(int index)
         {
             this.index = index;
+        }
+        #endregion
+
+        #region Operators
+        public static implicit operator AudioMixerIndex(int index) 
+        {
+            return new AudioMixerIndex(index);
         }
         #endregion
     }

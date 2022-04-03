@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace AudioLibrary
+namespace AudioUtility
 {
     public class AudioDashboard : MonoBehaviour
     {

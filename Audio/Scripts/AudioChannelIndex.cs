@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AudioLibrary
+namespace AudioUtility
 {
     [System.Serializable]
     public class AudioChannelIndex
@@ -24,13 +24,24 @@ namespace AudioLibrary
 
         #region Constructors 
         public AudioChannelIndex(int channelIndex) : 
-            this(channelIndex, 0) {}
+            this(0, channelIndex) {}
         public AudioChannelIndex(int mixerIndex, int channelIndex) : 
             this(new AudioMixerIndex(mixerIndex), channelIndex) {}
         public AudioChannelIndex(AudioMixerIndex mixerIndex, int channelIndex)
         {
             this.mixerIndex = mixerIndex;
             this.channelIndex = channelIndex;
+        }
+        #endregion
+
+        #region Operators
+        public static implicit operator AudioChannelIndex(int channelIndex)
+        {
+            return new AudioChannelIndex(AudioMixerIndex.Default, channelIndex);
+        }
+        public static implicit operator AudioChannelIndex((int, int) tuple)
+        {
+            return new AudioChannelIndex(tuple.Item1, tuple.Item2);
         }
         #endregion
     }

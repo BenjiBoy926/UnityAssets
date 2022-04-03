@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace AudioLibrary
+namespace AudioUtility
 {
     /// <summary>
     /// Data for a single audio mixer and the mixer groups

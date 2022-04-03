@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEditor;
 
-namespace AudioLibrary.Editor
+namespace AudioUtility.Editor
 {
     [CustomPropertyDrawer(typeof(AudioMixerIndex))]
     public class AudioMixerIndexDrawer : PropertyDrawer

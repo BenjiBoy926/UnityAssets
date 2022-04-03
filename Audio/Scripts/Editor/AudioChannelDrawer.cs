@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace AudioLibrary.Editor
+namespace AudioUtility.Editor
 {
     [CustomPropertyDrawer(typeof(AudioChannel))]
     public class AudioChannelDrawer : PropertyDrawer

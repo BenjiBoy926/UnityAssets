@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AudioLibrary
+namespace AudioUtility
 {
     [System.Serializable]
     public class AudioChannelNotFoundException : System.Exception

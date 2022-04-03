@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace AudioLibrary
+namespace AudioUtility
 {
     [System.Serializable]
     public class AudioChannelPool
@@ -28,10 +28,10 @@ namespace AudioLibrary
         public AudioChannelPool(int mixerIndex, int channelIndex, GameObject parent)
         {
             // Set this template channel
-            index = new AudioChannelIndex(channelIndex, mixerIndex);
+            index = (mixerIndex, channelIndex);
 
             // Get the channel referenced by the index
-            AudioChannel channel = AudioSettings.GetChannel(channelIndex);
+            AudioChannel channel = AudioSettings.GetChannel(index);
 
             // Create an object under my transform
             gameObject = new GameObject($"Output {channelIndex}: '{channel.Output}'");
@@ -56,46 +56,38 @@ namespace AudioLibrary
         #endregion
 
         #region Play Methods
-        public AudioSource Play(AudioClip clip, bool looping)
+        public AudioSource Play(AudioClip clip, int sourceIndex = -1, bool looping = false)
         {
-            AudioSource source = Play(clip, current, looping);
-            UpdateCurrent();
-
-            // Return the source that played the clip
-            return source;
-        }
-        public AudioSource Play(AudioClip clip, int sourceIndex, bool looping)
-        {
-            if (sourceIndex >= 0 && sourceIndex < pool.Length)
+            if (sourceIndex < 0 || sourceIndex >= pool.Length)
             {
-                // Get the audio source
-                AudioSource source = pool[sourceIndex];
-                bool wasPlaying = source.isPlaying;
-
-                // Play the source
-                source.clip = clip;
-                source.loop = looping;
-                source.Play();
-
-                // If the source was playing before,
-                // log a warning to let the player know
-                if (wasPlaying)
-                {
-                    Debug.LogWarning($"The audio source '{source}' " +
-                        $"was already playing before you started playing " +
-                        $"the audio clip '{clip}' on it. If this was an " +
-                        $"auto-play, then the sound channel that outputs " +
-                        $"to '{source.outputAudioMixerGroup}' should be " +
-                        $"given a higher audio source count on the " +
-                        $"{nameof(AudioSettings)}");
-                }
-
-                // Return the source that played the sound
-                return source;
+                sourceIndex = current;
+                UpdateCurrent();
             }
-            else throw new System.IndexOutOfRangeException(
-                $"No audio source associated with index {sourceIndex}. " +
-                $"Total audio sources: {pool.Length}");
+
+            // Get the audio source
+            AudioSource source = pool[sourceIndex];
+            bool wasPlaying = source.isPlaying;
+
+            // Play the source
+            source.clip = clip;
+            source.loop = looping;
+            source.Play();
+
+            // If the source was playing before,
+            // log a warning to let the player know
+            if (wasPlaying)
+            {
+                Debug.LogWarning($"The audio source '{source}' " +
+                    $"was already playing before you started playing " +
+                    $"the audio clip '{clip}' on it. If this was an " +
+                    $"auto-play, then the sound channel that outputs " +
+                    $"to '{source.outputAudioMixerGroup}' should be " +
+                    $"given a higher audio source count on the " +
+                    $"{nameof(AudioSettings)}");
+            }
+
+            // Return the source that played the sound
+            return source;
         }
         #endregion
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AudioLibrary
+namespace AudioUtility
 {
     /// <summary>
     /// An audio channel that might not be provided
