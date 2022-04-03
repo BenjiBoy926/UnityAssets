@@ -34,22 +34,26 @@ namespace AudioUtility
             }
         }
         // Change this to not throw and instead use an "out" parameter
-        public static float GetDecibels(AudioChannelIndex index)
+        public static bool GetDecibels(AudioChannelIndex index, out float decibels)
         {
             AudioMixer mixer = index.MixerIndex.Data.Mixer;
-            if (mixer.GetFloat(GetVolumeParameterName(index), out float decibels))
-            {
-                return decibels;
-            }
-            else throw new System.InvalidOperationException(GetMissingParameterWarning(index));
+            bool result = mixer.GetFloat(GetVolumeParameterName(index), out decibels);
+
+            // If there was no volume then log a warning
+            if (!result)
+                Debug.LogWarning(GetMissingParameterWarning(index));
+
+            return result;
         }
         // Change this to not throw and instead use an "out" parameter
-        public static float GetVolume(AudioChannelIndex index)
+        public static bool GetVolume(AudioChannelIndex index, out float volume)
         {
-            return DecibelsToVolume(GetDecibels(index));
+            bool result = GetDecibels(index, out volume);
+            volume = DecibelsToVolume(volume);
+            return result;
         }
         // Change this to return true or false
-        public static void SetVolume(AudioChannelIndex index, float volume)
+        public static bool SetVolume(AudioChannelIndex index, float volume)
         {
             AudioMixer mixer = index.MixerIndex.Data.Mixer;
             bool success = mixer.SetFloat(
@@ -57,9 +61,9 @@ namespace AudioUtility
                 VolumeToDecibels(volume));
 
             if (!success)
-            {
                 Debug.LogWarning(GetMissingParameterWarning(index));
-            }
+
+            return success;
         }
         public static float VolumeToDecibels(float volume)
         {

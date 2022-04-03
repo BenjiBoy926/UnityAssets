@@ -44,6 +44,7 @@ namespace AudioUtility
 
         #region Private Fields
         private float unmutedVolume;
+        private bool updatingUI;
         #endregion
 
         #region Public Methods
@@ -60,11 +61,14 @@ namespace AudioUtility
                 volumeSlider.maxValue = 100f;
 
                 // If we get a float then set the slider value
-                volumeSlider.SetValueWithoutNotify(AudioDashboard.GetVolume(channelIndex));
-
-                if (volumeSlider.value > 0f)
+                if (AudioDashboard.GetVolume(channelIndex, out float volume))
                 {
-                    unmutedVolume = volumeSlider.value;
+                    volumeSlider.SetValueWithoutNotify(volume);
+
+                    if (volumeSlider.value > 0f)
+                    {
+                        unmutedVolume = volumeSlider.value;
+                    }
                 }
             }
 
@@ -77,8 +81,10 @@ namespace AudioUtility
             // If we have a mute toggle then set it up
             if (muteToggle)
             {
-                float volume = AudioDashboard.GetVolume(channelIndex);
-                muteToggle.SetIsOnWithoutNotify(volume < 1f);
+                if (AudioDashboard.GetVolume(channelIndex, out float volume))
+                {
+                    muteToggle.SetIsOnWithoutNotify(volume < 1f);
+                }
             }
 
             // If we have title text then set it up
@@ -86,6 +92,9 @@ namespace AudioUtility
             {
                 titleText.text = $"{channelIndex.Channel.Output.name} Channel";
             }
+
+            // Set updating UI to true
+            updatingUI = true;
         }
         /// <summary>
         /// Apply the values in the UI to
@@ -98,6 +107,7 @@ namespace AudioUtility
 
             // Set the volume text
             volumeText.text = $"Volume: {volumeSlider.value}%";
+            updatingUI = false;
         }
         #endregion
 
@@ -110,6 +120,15 @@ namespace AudioUtility
             volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
             muteToggle.onValueChanged.AddListener(OnMuteChanged);
         }
+        private void Update()
+        {
+            // Re-update the ui on each frame
+            // This mechanism is used because setting the volume on the audio mixer
+            // results in smooth transitions that are not immediate, we need to make sure
+            // the UI updates each frame
+            if (updatingUI)
+                UpdateUI();
+        }
         private void OnValidate()
         {
             UpdateUI();
@@ -117,9 +136,6 @@ namespace AudioUtility
         public void Reset()
         {
             AudioDashboard.ResetDecibels(channelIndex);
-            Debug.Log(AudioDashboard.GetVolume(channelIndex));
-
-            // NOTE: have to wait until it finishes transitioning for this to work
             UpdateUI();
         }
         #endregion
