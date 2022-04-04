@@ -32,6 +32,20 @@ public class Pool<T>
     {
         T current = items[currentIndex];
 
+        // If this object is null we need to generate a new one
+        if (current is null)
+            current = generator.Invoke();
+
+        // Apparently unity's null check is different
+        // so we have to do a specific check for unity objects
+        if (current is UnityEngine.Object)
+        {
+            UnityEngine.Object obj = current as UnityEngine.Object;
+
+            if (obj == null)
+                current = generator.Invoke();
+        }
+
         // If the current item is not usable then 
         // add a new one to the pool of items
         if (!usable.Invoke(current))

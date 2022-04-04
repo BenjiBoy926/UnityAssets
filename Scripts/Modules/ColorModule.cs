@@ -2,8 +2,13 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ColorModule
+public static class ColorModule
 {
+    public static Color SetAlpha(this Color color, float alpha)
+    {
+        return new Color(color.r, color.g, color.b, alpha);
+    }
+
     // Flicker the color between the two colors given
     public static IEnumerator Flicker(Color startColor, Color endColor, float totalTime, float flickerTime, UnityAction<Color> callback)
     {
