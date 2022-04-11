@@ -3,6 +3,14 @@ using UnityEngine;
 
 public static class GameObjectModule
 {
+    public static TComponent GetOrAddComponent<TComponent>(this GameObject gameObject) 
+        where TComponent : Component
+    {
+        TComponent component = gameObject.GetComponent<TComponent>();
+        if (!component) component = gameObject.AddComponent<TComponent>();
+        return component;
+    }
+
     public static bool CompareTagInParent(this GameObject gameObject, string tag)
     {
         if (gameObject.CompareTag(tag)) return true;
