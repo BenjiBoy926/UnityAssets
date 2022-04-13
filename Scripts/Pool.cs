@@ -1,9 +1,10 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pool<T>
+public class Pool<T> where T : class
 {
     #region Private Fields
     private List<T> items = new List<T>();
@@ -11,19 +12,30 @@ public class Pool<T>
 
     private Func<T> generator;
     private Predicate<T> usable;
+    private Action<T> makeUsable;
     #endregion
 
     #region Constructors
-    public Pool(int initialItems, Func<T> generator, Predicate<T> usable)
+    public Pool(int initialItems, Func<T> generator, Predicate<T> usable, Action<T> makeUsable)
     {
         this.generator = generator;
         this.usable = usable;
+        this.makeUsable = makeUsable;
 
-        // Use the generator to generat the initial items
+        // Use the generator to generate the initial items
         for (int i = 0; i < initialItems; i++)
         {
-            items.Add(generator.Invoke());
+            T item = generator.Invoke();
+            makeUsable.Invoke(item);
+
+            // Check to make sure the condition of the action is met
+            if (!usable.Invoke(item))
+                Debug.LogWarning($"Item '{item}' is not usable " +
+                    $"after invoking 'makeUsable' on the item");
+
+            items.Add(item);
         }
+
     }
     #endregion
 
@@ -33,18 +45,8 @@ public class Pool<T>
         T current = items[currentIndex];
 
         // If this object is null we need to generate a new one
-        if (current is null)
+        if (ReferenceEquals(current, null))
             current = generator.Invoke();
-
-        // Apparently unity's null check is different
-        // so we have to do a specific check for unity objects
-        if (current is UnityEngine.Object)
-        {
-            UnityEngine.Object obj = current as UnityEngine.Object;
-
-            if (obj == null)
-                current = generator.Invoke();
-        }
 
         // If the current item is not usable then 
         // add a new one to the pool of items
