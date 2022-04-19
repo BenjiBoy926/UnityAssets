@@ -31,7 +31,7 @@ public class Pool<T> where T : class
             // Check to make sure the condition of the action is met
             if (!usable.Invoke(item))
                 Debug.LogWarning($"Item '{item}' is not usable " +
-                    $"after invoking 'makeUsable' on the item");
+                    $"after invoking 'makeUsable' on it");
 
             items.Add(item);
         }
