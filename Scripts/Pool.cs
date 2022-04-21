@@ -27,7 +27,6 @@ public class Pool<T> where T : class
         {
             GenerateItem();
         }
-
     }
     #endregion
 
@@ -36,9 +35,15 @@ public class Pool<T> where T : class
     {
         T current = items[currentIndex];
 
-        // If this object is null we need to generate a new one
-        if (current is null)
-            current = generator.Invoke();
+        if (typeof(T).IsSubclassOf(typeof(UnityEngine.Object)))
+        {
+            // Have to typecast unity objects for correct null checks
+            UnityEngine.Object currentAsObject = current as UnityEngine.Object;
+            if (!currentAsObject)
+                current = GenerateItem();
+        }
+        else if (current is null)
+            current = GenerateItem();
 
         // If the current item is not usable then 
         // add a new one to the pool of items
