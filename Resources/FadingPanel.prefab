@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5712601236433290552}
   - component: {fileID: 5712601236433290556}
   - component: {fileID: 5712601236433290559}
-  - component: {fileID: 5712601236433290557}
+  - component: {fileID: 2604705505851181867}
   m_Layer: 5
   m_Name: FadingPanel
   m_TagString: Untagged
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5712601236433290557
+--- !u!114 &2604705505851181867
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -131,10 +131,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5712601236433290554}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460844259edde2c4686eed0fd8b3dc92, type: 3}
+  m_Script: {fileID: 11500000, guid: fe64d40b9b9c5bd4ab1f6ed7cf14408f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 5712601236433290559}
-  fadeOutOnStart: 1
+  fadeOutOnStart: 0
   defaultFadeOutTime: 1
   defaultFadeInTime: 0.3

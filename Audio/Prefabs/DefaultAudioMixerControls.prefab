@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 7408279085167056862}
   - component: {fileID: 7408279085167056860}
   - component: {fileID: 7408279085167056863}
-  - component: {fileID: 7408279085167056861}
+  - component: {fileID: 2861219144939857026}
   m_Layer: 5
   m_Name: DefaultAudioMixerControls
   m_TagString: Untagged
@@ -158,7 +158,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7408279085167056861
+--- !u!114 &2861219144939857026
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -167,13 +167,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7408279085167056857}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f43e8d9f884cbc145a24a9fedfe41ed1, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c08fb25e4624e4b9fdc25471986cc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mixerIndex:
     index: 0
-  channelControlsPrefab: {fileID: 5017860364505120154, guid: d2074a08f0f4fda41830a844c833ff45,
-    type: 3}
+  channelControlsPrefab: {fileID: 7741019882493122783, guid: 071571bfa0e29e94eadfe3cfe43c19be, type: 3}
   channelControlsParent: {fileID: 7408279085762822703}
   titleText: {fileID: 7408279086030520830}
   resetButton: {fileID: 6436144299640302440}
