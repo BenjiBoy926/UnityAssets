@@ -68,7 +68,7 @@ public static class MovementModule
     // Infinitely shake the transform
     public static IEnumerator Shake2D(this Transform transform, Vector3 basePosition, float shakeMagnitude, float shakeInterval)
     {
-        WaitForSeconds wait = new WaitForSeconds(shakeInterval);
+        WaitForSeconds wait = new(shakeInterval);
         while(true)
         {
             transform.position = basePosition + (Vector3)(Random.insideUnitCircle * shakeMagnitude);
@@ -85,13 +85,13 @@ public static class MovementModule
         Vector2 startingPos = rb2D.position;
 
         // This function updates the rigidbody position by linearly interpolating it between the start and ending position
-        UnityAction<float> updatePosition = currentTime =>
+        void UpdatePosition(float currentTime)
         {
             rb2D.MovePosition(Vector2.Lerp(startingPos, endingPos, currentTime * inverseTime));
-        };
+        }
 
         // Run fixed update for time, where the action updates the rigidbody position
-        yield return CoroutineModule.FixedUpdateForTime(time, updatePosition);
+        yield return CoroutineModule.FixedUpdateForTime(time, UpdatePosition);
     }
 
     public static IEnumerator RotateOverTime(this Rigidbody2D rb2D, float amount, float time, RotationDirection direction)
@@ -114,13 +114,13 @@ public static class MovementModule
         }
 
         // This function linearly interpolates between starting and ending rotations for the rigidbody
-        UnityAction<float> updateRotation = currentTime =>
+        void UpdateRotation(float currentTime)
         {
             rb2D.MoveRotation(Mathf.Lerp(startingRotation, endingRotation, currentTime * inverseTime));
-        };
+        }
 
         // Run the fixed update for some time, updating the rigidbody rotation
-        yield return CoroutineModule.FixedUpdateForTime(time, updateRotation);
+        yield return CoroutineModule.FixedUpdateForTime(time, UpdateRotation);
         
         // Make sure that the ending rotation is exactly the roation the rigidbody ends on
         rb2D.rotation = endingRotation;
